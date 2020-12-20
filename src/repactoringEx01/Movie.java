@@ -1,17 +1,18 @@
 package repactoringEx01;
 
 public class Movie {
-	
+
 	public static final int CHILDREN = 2;
 	public static final int REGULAR = 0;
 	public static final int NEW_RELEASE = 1;
-	
+
+	private Price price;
 	private String title;
 	private int priceCode;
-	
+
 	public Movie(String title, int priceCode) {
 		this.title = title;
-		this.priceCode = priceCode;
+		setPriceCode(priceCode);
 	}
 
 	public String getTitle() {
@@ -26,47 +27,32 @@ public class Movie {
 		return priceCode;
 	}
 
-	public void setPriceCode(int priceCode) {
-		this.priceCode = priceCode;
-	}
-	
-	public double getCharge(int daysRented) {
-			
-			double eachAmount=0;
-			
-			switch (getPriceCode()) {
-			case Movie.REGULAR:
-				eachAmount += 2;
-				if(daysRented>2)
-					eachAmount += (daysRented-2)*1.5;
-				break;
-			case Movie.NEW_RELEASE:
-				eachAmount += daysRented*3;
-				break;
-			case Movie.CHILDREN:
-				eachAmount += 1.5;
-				if(daysRented>3)
-					eachAmount += (daysRented-3)*1.5;
-				break;
+	public void setPriceCode(int arg) {
+
+		switch (arg) {
+
+		case REGULAR:
+			this.price = new RegularPrice();
+			break;
+		case CHILDREN:
+			this.price = new ChildrenPrice();
+			break;
+		case NEW_RELEASE:
+			this.price = new NewReleasePrice();
+			break;
+		default:
+			throw new IllegalArgumentException("incorrect Price Code");
 		}
-			
-			return eachAmount;
-		}
-	
-		public int getFrequentRenterPoints(int daysRented) {
-			int result = 0;
-			
-			//포인트 추가
-			result ++;
-			
-			//최신을 이틀 이상 대여하는 경우 추가 포인트 제공
-			if((getPriceCode()==Movie.NEW_RELEASE && daysRented>1))
-				result ++;
-		
-			return result;		
-		}
-	
-		
+
+//		this.priceCode = priceCode;
 	}
 
-	
+	public double getCharge(int daysRented) {
+		return price.getCharge(daysRented);
+	}
+
+	public int getFrequentRenterPoints(int daysRented) {
+		return price.getFrequentRenterPoints(daysRented);
+	}
+
+}
